@@ -4,8 +4,7 @@ FROM ubuntu:latest
 ### base ###
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN yes | unminimize \
-    && install-packages \
+RUN apt-get update && apt-get install -yq --no-install-recommends \
         zip \
         unzip \
         bash-completion \
