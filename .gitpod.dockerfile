@@ -1,34 +1,6 @@
 FROM ubuntu:21.10
 
-RUN yes | unminimize \
-    && install-packages \
-        zip \
-        unzip \
-        bash-completion \
-        build-essential \
-        ninja-build \
-        htop \
-        jq \
-        less \
-        locales \
-        man-db \
-        nano \
-        software-properties-common \
-        sudo \
-        time \
-        vim \
-        multitail \
-        lsof \
-        ssl-cert \
-        fish \
-        zsh \
-    && locale-gen en_US.UTF-8
-
 ENV LANG=en_US.UTF-8
-
-### Git ###
-RUN add-apt-repository -y ppa:git-core/ppa \
-    && install-packages git
 
 ### Gitpod user ###
 # '-l': see https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
@@ -37,6 +9,7 @@ RUN useradd -l -u 33333 -G sudo -md /home/gitpod -s /bin/bash -p gitpod gitpod \
     && sed -i.bkp -e 's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' /etc/sudoers
 ENV HOME=/home/gitpod
 WORKDIR $HOME
+
 # custom Bash prompt
 RUN { echo && echo "PS1='\[\e]0;\u \w\a\]\[\033[01;32m\]\u\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \\\$ '" ; } >> .bashrc
 
