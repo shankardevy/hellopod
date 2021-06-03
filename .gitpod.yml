@@ -1,2 +1,2 @@
-image: ubuntu:21.10
+image: gitpod/workspace-base:latest
 
