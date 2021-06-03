@@ -1,4 +1,4 @@
-FROM elixir:1.12
+FROM elixir:1.12-slim
 
 
 ### base ###
@@ -24,10 +24,14 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
         lsof \
         ssl-cert \
         fish \
-        zsh \
-    && locale-gen en_US.UTF-8
+        zsh 
 
-ENV LANG=en_US.UTF-8
+RUN echo "Asia/Kolkata" > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata && \
+    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    echo 'LANG="en_US.UTF-8"'>/etc/default/locale && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
 
 ### Gitpod user ###
 # '-l': see https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
