@@ -31,7 +31,7 @@ ENV LANG=en_US.UTF-8
 
 ### Git ###
 RUN add-apt-repository -y ppa:git-core/ppa \
-    && install-packages git
+    && apt-get install -yq --no-install-recommends git
 
 ### Gitpod user ###
 # '-l': see https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
