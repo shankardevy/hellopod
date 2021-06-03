@@ -52,7 +52,7 @@ RUN sudo echo "Running 'sudo' for Gitpod: success" && \
     (echo; echo "for i in \$(ls \$HOME/.bashrc.d/*); do source \$i; done"; echo) >> /home/gitpod/.bashrc
     
 # Install PostgreSQL
-RUN sudo install-packages postgresql-12 postgresql-contrib-12
+RUN sudo apt-get install -yq --no-install-recommends postgresql-12 postgresql-contrib-12
 
 # Setup PostgreSQL server for user gitpod
 ENV PATH="$PATH:/usr/lib/postgresql/12/bin"
