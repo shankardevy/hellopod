@@ -29,10 +29,6 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 
 ENV LANG=en_US.UTF-8
 
-### Git ###
-RUN add-apt-repository -y ppa:git-core/ppa \
-    && apt-get install -yq --no-install-recommends git
-
 ### Gitpod user ###
 # '-l': see https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
 RUN useradd -l -u 33333 -G sudo -md /home/gitpod -s /bin/bash -p gitpod gitpod \
