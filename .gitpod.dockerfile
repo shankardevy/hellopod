@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM elixir:1.12-slim
 
 
 ### base ###
