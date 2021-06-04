@@ -1,7 +1,7 @@
 FROM elixir:1.12-slim
 
+RUN mix local.hex --force
 
-### base ###
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -yq --no-install-recommends \
@@ -23,9 +23,9 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
         multitail \
         lsof \
         ssl-cert \
-        fish \
-        zsh 
+        curl
 
+# Set locale
 RUN echo "Asia/Kolkata" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \
     sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -33,8 +33,7 @@ RUN echo "Asia/Kolkata" > /etc/timezone && \
     dpkg-reconfigure --frontend=noninteractive locales && \
     update-locale LANG=en_US.UTF-8
 
-### Gitpod user ###
-# '-l': see https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
+
 RUN useradd -l -u 33333 -G sudo -md /home/gitpod -s /bin/bash -p gitpod gitpod \
     # passwordless sudo for users in the 'sudo' group
     && sed -i.bkp -e 's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' /etc/sudoers
@@ -51,16 +50,21 @@ RUN sudo echo "Running 'sudo' for Gitpod: success" && \
     mkdir /home/gitpod/.bashrc.d && \
     (echo; echo "for i in \$(ls \$HOME/.bashrc.d/*); do source \$i; done"; echo) >> /home/gitpod/.bashrc
     
+# Install Nodejs 16
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
+
 # Install PostgreSQL
 RUN sudo apt-get install -yq --no-install-recommends postgresql postgresql-contrib
 
 # Setup PostgreSQL server for user gitpod
-ENV PATH="$PATH:/usr/lib/postgresql/12/bin"
+ENV PATH="$PATH:/usr/lib/postgresql/11/bin"
 ENV PGDATA="/workspace/.pgsql/data"
 RUN mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
- && printf '#!/bin/bash\n[ ! -d $PGDATA ] && mkdir -p $PGDATA && initdb -D $PGDATA\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" start\n' > ~/.pg_ctl/bin/pg_start \
+ && printf '#!/bin/bash\n[ ! -d $PGDATA ] && mkdir -p $PGDATA && initdb -U postgres -D $PGDATA\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" start\n' > ~/.pg_ctl/bin/pg_start \
  && printf '#!/bin/bash\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" stop\n' > ~/.pg_ctl/bin/pg_stop \
  && chmod +x ~/.pg_ctl/bin/*
+ 
 ENV PATH="$PATH:$HOME/.pg_ctl/bin"
 ENV DATABASE_URL="postgresql://gitpod@localhost"
 ENV PGHOSTADDR="127.0.0.1"
