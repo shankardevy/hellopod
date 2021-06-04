@@ -50,9 +50,9 @@ RUN sudo echo "Running 'sudo' for Gitpod: success" && \
     mkdir /home/gitpod/.bashrc.d && \
     (echo; echo "for i in \$(ls \$HOME/.bashrc.d/*); do source \$i; done"; echo) >> /home/gitpod/.bashrc
     
-# Install Nodejs 16
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-RUN sudo apt-get install -y nodejs && apt-get install inotify-tools
+# Install Nodejs 12
+RUN curl -fsSL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
 
 # Install PostgreSQL
 RUN sudo apt-get install -yq --no-install-recommends postgresql postgresql-contrib
